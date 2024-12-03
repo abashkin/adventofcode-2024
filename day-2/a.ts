@@ -2,8 +2,6 @@ import { runSolution } from '../utils.ts';
 
 /** provide your solution as the return of this function */
 export async function day2a(data: string[]) {
-  console.log(data);
-
   return data.map(isSafeRow).filter((isSafe) => isSafe).length;
 }
 
@@ -33,6 +31,5 @@ function isSafeRow(row: string): boolean {
       return false;
     }
   }
-  console.log('safe');
   return true;
 }
