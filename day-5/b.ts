@@ -4,9 +4,7 @@ import { runSolution } from '../utils.ts';
 export async function day5a(data: string[]) {
   const [rules, orders] = divideDataToRulesAndOrders(data);
 
-  const correctedOrders = getCorrectedOrders(orders, rules);
-
-  return correctedOrders.reduce((prev, curr) => {
+  return getCorrectedOrders(orders, rules).reduce((prev, curr) => {
     return prev + getMiddlePage(curr);
   }, 0);
 }
@@ -19,19 +17,17 @@ function divideDataToRulesAndOrders(data: string[]): [string[], string[]] {
 }
 
 function getCorrectedOrders(orders: string[], rules: string[]): string[] {
-  console.log('Hello');
-  let result = [];
+  const result = [];
   const badOrders = orders.filter((order) => isBadOrder(order, rules));
 
   for (let i = 0; i < badOrders.length; i++) {
     let badOrder = badOrders[i];
-    const incorrectRules = getIncorrectRulesForOrder(badOrder, rules);
 
-    console.log('Bad Order: ', badOrder);
-    console.log('Rules', incorrectRules);
-    for (let j = 0; j < incorrectRules.length; j++) {
-      badOrder = getFixedOrderForRule(badOrder, incorrectRules[j]);
+    while(hasIncorrectRules(badOrder, rules)) {
+      const first = getIncorrectRulesForOrder(badOrder, rules)[0];
+      badOrder = getFixedOrderForRule(badOrder, first);
     }
+
     result.push(badOrder);
   }
 
@@ -57,6 +53,10 @@ function getIncorrectRulesForOrder(order, rules): string[] {
   });
 }
 
+function hasIncorrectRules(order, rules): boolean {
+  return rules.some(rule => isIncorrectRule(order, rule))
+}
+
 function isIncorrectRule(order, rule): boolean {
   const [first, second] = rule.split('|');
   if (order.includes(first) && order.includes(second)) {
@@ -70,25 +70,22 @@ function getFixedOrderForRule(order: string, rule: string): string {
 
   const [first, second] = rule.split('|');
   const orderAsArr = order.split(',');
-  const indx1 = orderAsArr.indexOf(first);
-  const indx2 = orderAsArr.indexOf(second);
+  const fixedOrder = swapNumbersInOrder(orderAsArr, orderAsArr.indexOf(first), orderAsArr.indexOf(second));
 
-  const correctFirst = orderAsArr[indx2];
-  const correctSecond = orderAsArr[indx1];
+  return fixedOrder;
+}
 
-  console.log(orderAsArr);
-  console.log('Bad1: ', indx1);
-  console.log('Bad2: ', indx2);
-  orderAsArr[indx1] = correctFirst;
-  orderAsArr[indx2] = correctSecond;
+function swapNumbersInOrder(order: string[], indx1, indx2): string {
+  const correctFirst = order[indx2];
+  const correctSecond = order[indx1];
 
-  console.log(`Fixed order ${orderAsArr.join(',')}`);
+  order[indx1] = correctFirst;
+  order[indx2] = correctSecond;
 
-  return orderAsArr.join(',');
+  return order.join(',')
 }
 
 function getMiddlePage(order: string): number {
   const orderPageNums = order.split(',').map(Number);
-  console.log(orderPageNums[(orderPageNums.length - 1) / 2]);
   return orderPageNums[(orderPageNums.length - 1) / 2];
 }
