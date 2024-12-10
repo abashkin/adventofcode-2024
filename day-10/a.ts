@@ -2,8 +2,86 @@ import { runSolution } from '../utils.ts';
 
 /** provide your solution as the return of this function */
 export async function day10a(data: string[]) {
-  console.log(data);
+  const set = new Set();
+  const topographicMap: number[][] = createMap(data);
+  const hikingStartPoints: number[][] = getHikingStartPoints(topographicMap);
+  let counter = { total: 0 };
+  hikingStartPoints.forEach((startPoint) => {
+    const hikeSet = new Set<string>();
+    hikeTrail(startPoint, topographicMap, hikeSet, counter);
+  });
+
+  console.log(counter.total);
   return 0;
 }
 
 await runSolution(day10a);
+
+function createMap(data: string[]): number[][] {
+  const map = [];
+  data.forEach((row, idx) => {
+    map[idx] = row.split('').map((point) => {
+      return isNaN(Number(point)) ? -100 : Number(point);
+    });
+  });
+
+  return map;
+}
+
+function getHikingStartPoints(map: number[][]): number[][] {
+  const startPoints = [];
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[i].length; j++) {
+      if (map[i][j] === 0) {
+        startPoints.push([i, j]);
+      }
+    }
+  }
+  return startPoints;
+}
+
+function hikeTrail(
+  point: number[],
+  map: number[][],
+  hikeSet: Set<string>,
+  counter: { total: number }
+) {
+  const [row, col] = point;
+  const pointHeight = map[row][col];
+  const pointMarker = `${row}-${col}`;
+
+  if (!hikeSet.has(pointMarker)) {
+    hikeSet.add(pointMarker);
+  } else {
+    return;
+  }
+
+  if (pointHeight === 9) {
+    counter.total++;
+  }
+
+  if (row > 0) {
+    const up = map[row - 1][col];
+    if (up - pointHeight === 1) {
+      hikeTrail([row - 1, col], map, hikeSet, counter);
+    }
+  }
+  if (col < map[0].length - 1) {
+    const right = map[row][col + 1];
+    if (right - pointHeight === 1) {
+      hikeTrail([row, col + 1], map, hikeSet, counter);
+    }
+  }
+  if (row < map.length - 1) {
+    const down = map[row + 1][col];
+    if (down - pointHeight === 1) {
+      hikeTrail([row + 1, col], map, hikeSet, counter);
+    }
+  }
+  if (col > 0) {
+    const left = map[row][col - 1];
+    if (left - pointHeight === 1) {
+      hikeTrail([row, col - 1], map, hikeSet, counter);
+    }
+  }
+}
