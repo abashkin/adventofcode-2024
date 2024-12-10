@@ -2,7 +2,6 @@ import { runSolution } from '../utils.ts';
 
 /** provide your solution as the return of this function */
 export async function day10a(data: string[]) {
-  const set = new Set();
   const topographicMap: number[][] = createMap(data);
   const hikingStartPoints: number[][] = getHikingStartPoints(topographicMap);
   let counter = { total: 0 };
@@ -60,24 +59,28 @@ function hikeTrail(
     counter.total++;
   }
 
+  //goUp
   if (row > 0) {
     const up = map[row - 1][col];
     if (up - pointHeight === 1) {
       hikeTrail([row - 1, col], map, hikeSet, counter);
     }
   }
+  //goRight
   if (col < map[0].length - 1) {
     const right = map[row][col + 1];
     if (right - pointHeight === 1) {
       hikeTrail([row, col + 1], map, hikeSet, counter);
     }
   }
+  //goDown
   if (row < map.length - 1) {
     const down = map[row + 1][col];
     if (down - pointHeight === 1) {
       hikeTrail([row + 1, col], map, hikeSet, counter);
     }
   }
+  //goLeft
   if (col > 0) {
     const left = map[row][col - 1];
     if (left - pointHeight === 1) {
