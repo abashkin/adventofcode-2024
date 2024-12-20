@@ -107,20 +107,41 @@ class Grid {
 export async function day20a(data: string[]) {
   const grid = new Grid(data);
   const path = grid.getPath();
+  const pathLenght = path.length;
   const cheats = grid.getCheats();
-  const cheatLengthMap: Map<number, number> = new Map();
+
+  let count = 0;
+  for (let i = 0; i < pathLenght - 76; i++) {
+    for (let j = i + 76; j < pathLenght; j++) {
+      const p1 = path.at(i);
+      const p2 = path.at(j);
+      if (isIn20Ms(p1, p2)) {
+        count++;
+      }
+    }
+  }
+
+  console.log(count++);
 
   let totalLongerThan100 = 0;
 
-  for (const cheat of cheats) {
-    const { start, end } = cheat;
-    const cheatLen = path.indexOf(end) - path.indexOf(start) - 2;
-    if (cheatLen >= 100) {
-      totalLongerThan100++;
-    }
-  }
+  // for (const cheat of cheats) {
+  //   const { start, end } = cheat;
+  //   const cheatLen = path.indexOf(end) - path.indexOf(start) - 2;
+  //   if (cheatLen >= 100) {
+  //     totalLongerThan100++;
+  //   }
+  // }
 
   return totalLongerThan100;
 }
 
 await runSolution(day20a);
+
+function isIn20Ms(p1: string, p2: string) {
+  console.log('P1, P2: ', p1, p2);
+  const [x1, y1] = p1.split(',').map(Number);
+  const [x2, y2] = p1.split(',').map(Number);
+
+  return Math.abs(x2 - x1) + Math.abs(y2 - y1) < 21;
+}
