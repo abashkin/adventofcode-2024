@@ -113,9 +113,12 @@ export async function day20a(data: string[]) {
   let count = 0;
   for (let i = 0; i < pathLenght - 76; i++) {
     for (let j = i + 76; j < pathLenght; j++) {
+      console.log('i,j: ', i, j);
+      console.log('Path: ', path.at(i), path.at(j));
       const p1 = path.at(i);
       const p2 = path.at(j);
-      if (isIn20Ms(p1, p2)) {
+      const dist = getDist(p1, p2);
+      if (dist < 21 && i + dist + pathLenght - j === 76) {
         count++;
       }
     }
@@ -138,10 +141,9 @@ export async function day20a(data: string[]) {
 
 await runSolution(day20a);
 
-function isIn20Ms(p1: string, p2: string) {
-  console.log('P1, P2: ', p1, p2);
+function getDist(p1: string, p2: string) {
   const [x1, y1] = p1.split(',').map(Number);
   const [x2, y2] = p1.split(',').map(Number);
 
-  return Math.abs(x2 - x1) + Math.abs(y2 - y1) < 21;
+  return Math.abs(x2 - x1) + Math.abs(y2 - y1) - 2;
 }
