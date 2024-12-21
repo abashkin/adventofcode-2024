@@ -1,4 +1,3 @@
-import { setDefaultResultOrder } from 'dns';
 import { runSolution } from '../utils.ts';
 
 type Point = [number, number];
@@ -108,33 +107,31 @@ export async function day20a(data: string[]) {
   const grid = new Grid(data);
   const path = grid.getPath();
   const pathLenght = path.length;
-  const cheats = grid.getCheats();
 
   let count = 0;
-  for (let i = 0; i < pathLenght - 76; i++) {
-    for (let j = i + 76; j < pathLenght; j++) {
-      console.log('i,j: ', i, j);
-      console.log('Path: ', path.at(i), path.at(j));
-      const p1 = path.at(i);
-      const p2 = path.at(j);
-      const dist = getDist(p1, p2);
-      if (dist < 21 && i + dist + pathLenght - j === 76) {
-        count++;
+  const minJumpDistance = 100;
+  const totalLongerThan100 = 0;
+
+  //pathLength
+  //0...p1 + p1-to-p2 + p2 ... end
+  // (indexof(p2)-indexof(p1))-p1p2Jump =76
+
+  //indxOf(p[j])-indexof(p[i]) = 76 + jumpSize
+
+
+  for(let curr = 0; curr< pathLenght-minJumpDistance; curr++){
+    for(let jump = 1; jump < 21; jump++) {
+      for(let next = curr + jump + minJumpDistance; next < pathLenght; next++) {
+        if(jump === getDist(path[curr], path[next])) {
+          console.log(curr, next, jump);
+          count++
+        }
       }
+
     }
   }
 
-  console.log(count++);
-
-  let totalLongerThan100 = 0;
-
-  // for (const cheat of cheats) {
-  //   const { start, end } = cheat;
-  //   const cheatLen = path.indexOf(end) - path.indexOf(start) - 2;
-  //   if (cheatLen >= 100) {
-  //     totalLongerThan100++;
-  //   }
-  // }
+  console.log(count);
 
   return totalLongerThan100;
 }
@@ -142,8 +139,9 @@ export async function day20a(data: string[]) {
 await runSolution(day20a);
 
 function getDist(p1: string, p2: string) {
+  // console.log(`${p1}-${p2}`);
   const [x1, y1] = p1.split(',').map(Number);
-  const [x2, y2] = p1.split(',').map(Number);
+  const [x2, y2] = p2.split(',').map(Number);
 
-  return Math.abs(x2 - x1) + Math.abs(y2 - y1) - 2;
+  return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 }
