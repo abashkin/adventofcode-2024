@@ -12,7 +12,6 @@ export async function day23a(data: string[]) {
 
   const trios = getTrio(connections);
 
-  console.log(trios);
   console.log(trios.size);
   return 0;
 }
@@ -27,6 +26,11 @@ function getTrio(connections: Connection[]): Set<string> {
     lanGraph.get(pc1)!.add(pc2)
     lanGraph.get(pc2)!.add(pc1)
   }
+
+  for (const pc of [...lanGraph.keys()]) {
+    console.log(lanGraph.get(pc))
+  }
+
 
   const trios: Set<string> = new Set();
 
